@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mkdocs-gen-nav-plugin"
+version = "0.0.2"
+authors = [
+  { name="soonoh", email="soonoh.jung@gmail.com" },
+]
+description = "Mkdocs plugin to generate nav list from docs dir"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vrerv/mkdocs-gen-nav-plugin"
+"Bug Tracker" = "https://github.com/vrerv/mkdocs-gen-nav-plugin/issues"
+
+[project.entry-points."mkdocs.plugins"]
+gen_nav = "mkdocs_gen_nav_plugin.plugin:GenNavPlugin"
