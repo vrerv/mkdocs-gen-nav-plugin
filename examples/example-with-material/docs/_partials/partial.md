@@ -1,0 +1,3 @@
+# Partial Page
+
+partial.md

@@ -4,9 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mkdocs-gen-nav-plugin"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
   { name="soonoh", email="soonoh.jung@gmail.com" },
+  { name="FrozenSource", email="bram.nijenkamp@dataacess.eu"}
 ]
 description = "Mkdocs plugin to generate nav list from docs dir"
 readme = "README.md"
