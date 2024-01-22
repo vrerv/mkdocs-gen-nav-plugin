@@ -7,10 +7,9 @@ This plugin generates the `config['nav']` automatically for your MkDocs document
 The following rules are used to generate the navigation:
 
 * The file or directory names are used as the navigation title.
-* If a directory name ends with a '_' character, it will use the underlying index.html which can be used in for example the blog plugin which generates files.
 * If a path name starts with two digits and '_' characters, it is ignored in the title. This means that it is only used to sort the navigation list.
 * If a path name starts with '_', it will be ignored. This means that the links to that markdown file should be a part of some other document manually.
-* The file named "index.md" will be ignored.
+* The file named "index.md" in the docs root dir will be ignored.
 
 ## Configuration
 
