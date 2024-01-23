@@ -23,8 +23,7 @@ class GenNavPlugin(BasePlugin):
     
     def rename_item(self, path):
         file = os.path.basename(path)
-        if file[0:2].isdigit() and file[2] == '_':
-            file = file[3:]
+        file = self.remove_prefix(file)
         
         parent_path = os.path.dirname(path)
         if parent_path != path:
@@ -51,10 +50,10 @@ class GenNavPlugin(BasePlugin):
             item_title = os.path.splitext(item)[0]
             if item_title.startswith('_') or (is_root and item_title == 'index'):
                 continue
-            if item_title[0:2].isdigit() and item_title[2] == '_':
-                item_title = item_title[3:]
+            item_title = self.remove_prefix(item_title)
             if os.path.isfile(item_path) and item.endswith(include):
-                nav_dict.append({self.format_title(item_title): os.path.relpath(item_path, base_dir)})
+                nav_dict.append(
+                    {self.format_title(item_title): os.path.relpath(item_path, base_dir)})
             elif os.path.isdir(item_path):
                 item_dict = self.create_nav_dict(base_dir, item_path, include)
                 if item_dict:
@@ -62,6 +61,13 @@ class GenNavPlugin(BasePlugin):
         return nav_dict
 
     @staticmethod
+    def remove_prefix(item_title):
+        if item_title[0:2].isdigit() and item_title[2] == '_':
+            item_title = item_title[3:]
+        return item_title
+
+    @staticmethod
     def format_title(title):
-        formatted = " ".join([word.capitalize() for word in title.replace("-", " ").replace("_", " ").split()])
+        formatted = " ".join([word.capitalize() for word
+                              in title.replace("-", " ").replace("_", " ").split()])
         return f'{formatted}'
