@@ -18,6 +18,10 @@ class TestGenNavPluginStaticMethods(unittest.TestCase):
         assert GenNavPlugin.format_title("hello-there-world") == "Hello There World"
         assert GenNavPlugin.format_title("hello_there_world") == "Hello There World"
 
+    def test_remove_prefix_with_short_string(self):
+        self.assertEqual(GenNavPlugin.remove_prefix("a"), "a")
+        self.assertEqual(GenNavPlugin.remove_prefix("7"), "7")
+
     def test_remove_prefix_with_digit(self):
         self.assertEqual(GenNavPlugin.remove_prefix("01_item"), "item")
 

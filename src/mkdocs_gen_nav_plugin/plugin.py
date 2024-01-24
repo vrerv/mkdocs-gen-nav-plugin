@@ -62,7 +62,7 @@ class GenNavPlugin(BasePlugin):
 
     @staticmethod
     def remove_prefix(item_title):
-        if item_title[0:2].isdigit() and item_title[2] == '_':
+        if len(item_title) >= 3 and item_title[0:2].isdigit() and item_title[2] == '_':
             item_title = item_title[3:]
         return item_title
 
