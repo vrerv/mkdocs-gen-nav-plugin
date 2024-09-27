@@ -67,7 +67,6 @@ class TestGenNavPlugin(unittest.TestCase):
                 ]}
             ]}
         ]
-        print(result)
         self.assertEqual(result, expected_result)
 
     def test_create_nav_dict_orderedList(self):
