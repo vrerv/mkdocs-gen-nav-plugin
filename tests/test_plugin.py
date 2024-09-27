@@ -1,4 +1,5 @@
 import os
+import posixpath
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -43,11 +44,13 @@ class TestGenNavPlugin(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def test_create_nav_dict_listfiles(self):
-
         structure = """
         dir1:
           - file1.md
           - file2.md
+        dir2:
+          sub-dir1:
+            - file3.md
         """
         self.temp_dir = create_dirs_and_files_from_yaml(self.temp_dir, structure)
 
@@ -55,14 +58,19 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Dir1': [
-                {'File1': os.path.join('dir1', 'file1.md')},
-                {'File2': os.path.join('dir1', 'file2.md')}
+                {'File1': posixpath.join('dir1', 'file1.md')},
+                {'File2': posixpath.join('dir1', 'file2.md')}
+            ]},
+            {'Dir2': [
+                {'Sub Dir1': [
+                    {'File3': posixpath.join('dir2', 'sub-dir1', 'file3.md')}
+                ]}
             ]}
         ]
+        print(result)
         self.assertEqual(result, expected_result)
 
     def test_create_nav_dict_orderedList(self):
-
         structure = """
         02_dir1:
           - 99_file1.md
@@ -78,18 +86,17 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Dir2': [
-                {'File2': os.path.join('01_dir2', 'file2.md')},
-                {'File3': os.path.join('01_dir2', 'file3.md')}
+                {'File2': posixpath.join('01_dir2', 'file2.md')},
+                {'File3': posixpath.join('01_dir2', 'file3.md')}
             ]},
             {'Dir1': [
-                {'File12': os.path.join('02_dir1', '00_file12.md')},
-                {'File1': os.path.join('02_dir1', '99_file1.md')}
+                {'File12': posixpath.join('02_dir1', '00_file12.md')},
+                {'File1': posixpath.join('02_dir1', '99_file1.md')}
             ]}
         ]
         self.assertEqual(result, expected_result)
 
     def test_create_nav_dict_index(self):
-
         structure = """
         - index.md
         - blog:
@@ -104,13 +111,12 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Blog': [
-                {'Index': os.path.join('blog', 'index.md')}
+                {'Index': posixpath.join('blog', 'index.md')}
             ]}
         ]
         self.assertEqual(result, expected_result)
 
     def test_create_nav_dict_example_with_material(self):
-
         test_dir = os.path.split(__file__)[0]
         test_path = Path(test_dir) / ".." / "examples" / "example-with-material" / "docs"
 
@@ -118,16 +124,16 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(test_path, test_path, '.md')
         expected_result = [
             {'Blog': [
-                {'Index': os.path.join('00_blog', 'index.md')}
+                {'Index': posixpath.join('00_blog', 'index.md')}
             ]},
             {'A Second Menu': [
-                {'Index': os.path.join('01_a-second-menu', 'index.md')}
+                {'Index': posixpath.join('01_a-second-menu', 'index.md')}
             ]},
             {'C Menu': [
-                {'Index': os.path.join('c-menu', 'index.md')},
-                {'Sub C Menu': os.path.join('c-menu', 'sub-c-menu.md')}
+                {'Index': posixpath.join('c-menu', 'index.md')},
+                {'Sub C Menu': posixpath.join('c-menu', 'sub-c-menu.md')}
             ]},
-            {'D Menu': os.path.join('d-menu.md')},
+            {'D Menu': posixpath.join('d-menu.md')},
         ]
         self.assertEqual(result, expected_result)
 
