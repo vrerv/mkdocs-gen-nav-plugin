@@ -18,6 +18,9 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only"
 ]
+dependencies = [
+    "mkdocs>=1.4.2",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/vrerv/mkdocs-gen-nav-plugin"
@@ -25,3 +28,6 @@ classifiers = [
 
 [project.entry-points."mkdocs.plugins"]
 gen_nav = "mkdocs_gen_nav_plugin.plugin:GenNavPlugin"
+
+[tool.hatch.envs.dev]
+type = "conda"
