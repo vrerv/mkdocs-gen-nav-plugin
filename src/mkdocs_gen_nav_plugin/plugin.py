@@ -1,4 +1,6 @@
 import os
+import posixpath
+
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
 
@@ -46,14 +48,14 @@ class GenNavPlugin(BasePlugin):
         nav_dict = []
         is_root = base_dir == path
         for item in self.list_files_to_process(path, include):
-            item_path = os.path.join(path, item)
+            item_path = posixpath.join(path, item)
             item_title = os.path.splitext(item)[0]
             if item_title.startswith('_') or (is_root and item_title == 'index'):
                 continue
             item_title = self.remove_prefix(item_title)
             if os.path.isfile(item_path):
                 nav_dict.append(
-                    {self.format_title(item_title): os.path.relpath(item_path, base_dir)})
+                    {self.format_title(item_title): posixpath.relpath(item_path, base_dir)})
             elif os.path.isdir(item_path):
                 item_dict = self.create_nav_dict(base_dir, item_path, include)
                 if item_dict:
