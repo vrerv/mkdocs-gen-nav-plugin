@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mkdocs-gen-nav-plugin"
-version = "0.1.2"
+version = "0.2.0"
 authors = [
   { name="soonoh", email="soonoh.jung@gmail.com" },
   { name="FrozenSource", email="bram.nijenkamp@dataacess.eu"}
