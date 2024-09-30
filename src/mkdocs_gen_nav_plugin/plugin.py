@@ -1,5 +1,6 @@
 import os
 import posixpath
+from pathlib import Path
 
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
@@ -38,9 +39,21 @@ class GenNavPlugin(BasePlugin):
         return os.path.join(parent_path, file)
 
     def on_files(self, files, config):
+        """
+        The files event is called after the files collection is populated from the
+        docs_dir. Use this event to add, remove, or alter files in the collection. Note
+        that Page objects have not yet been associated with the file objects in the
+        collection. Use Page Events to manipulate page specific data.
+
+        https://www.mkdocs.org/dev-guide/api/#mkdocs.structure.files.File
+        :param files:
+        :param config:
+        :return:
+        """
         for file in files:
-            file.dest_path = file.dest_uri = self.rename_item(file.dest_path)
-            file.url = self.rename_item(file.url)
+            file.dest_path = self.rename_item(file.dest_path)
+            file.dest_uri = Path(self.rename_item(file.dest_path)).as_posix()
+            file.url = Path(self.rename_item(file.url)).as_posix()
             file.abs_dest_path = self.rename_item(file.abs_dest_path)
         return files
 
