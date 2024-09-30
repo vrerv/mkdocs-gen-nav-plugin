@@ -3,6 +3,7 @@ import posixpath
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import Mock
 
 from mkdocs_gen_nav_plugin.plugin import GenNavPlugin
 from tests.testutil import create_dirs_and_files_from_yaml
@@ -58,12 +59,12 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Dir1': [
-                {'File1': posixpath.join('dir1', 'file1.md')},
-                {'File2': posixpath.join('dir1', 'file2.md')}
+                {'File1': 'dir1/file1.md'},
+                {'File2': 'dir1/file2.md'}
             ]},
             {'Dir2': [
                 {'Sub Dir1': [
-                    {'File3': posixpath.join('dir2', 'sub-dir1', 'file3.md')}
+                    {'File3': 'dir2/sub-dir1/file3.md'}
                 ]}
             ]}
         ]
@@ -85,12 +86,12 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Dir2': [
-                {'File2': posixpath.join('01_dir2', 'file2.md')},
-                {'File3': posixpath.join('01_dir2', 'file3.md')}
+                {'File2': '01_dir2/file2.md'},
+                {'File3': '01_dir2/file3.md'}
             ]},
             {'Dir1': [
-                {'File12': posixpath.join('02_dir1', '00_file12.md')},
-                {'File1': posixpath.join('02_dir1', '99_file1.md')}
+                {'File12': '02_dir1/00_file12.md'},
+                {'File1': '02_dir1/99_file1.md'}
             ]}
         ]
         self.assertEqual(result, expected_result)
@@ -110,7 +111,7 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(self.root_path, self.root_path, '.md')
         expected_result = [
             {'Blog': [
-                {'Index': posixpath.join('blog', 'index.md')}
+                {'Index': 'blog/index.md'}
             ]}
         ]
         self.assertEqual(result, expected_result)
@@ -123,18 +124,72 @@ class TestGenNavPlugin(unittest.TestCase):
         result = self.plugin.create_nav_dict(test_path, test_path, '.md')
         expected_result = [
             {'Blog': [
-                {'Index': posixpath.join('00_blog', 'index.md')}
+                {'Index': '00_blog/index.md'}
             ]},
             {'A Second Menu': [
-                {'Index': posixpath.join('01_a-second-menu', 'index.md')}
+                {'Index': '01_a-second-menu/index.md'}
             ]},
             {'C Menu': [
-                {'Index': posixpath.join('c-menu', 'index.md')},
-                {'Sub C Menu': posixpath.join('c-menu', 'sub-c-menu.md')}
+                {'Index': 'c-menu/index.md'},
+                {'Sub C Menu': 'c-menu/sub-c-menu.md'}
             ]},
-            {'D Menu': posixpath.join('d-menu.md')},
+            {'D Menu': 'd-menu.md'},
         ]
         self.assertEqual(result, expected_result)
+
+    def test_on_files_with_valid_files(self):
+        files = [
+            Mock(dest_path="01_file.md", dest_uri="01_file.md", url="01_file.md",
+                 abs_dest_path=os.path.join('abs', 'path', '01_file.md')),
+            Mock(dest_path="02_file.md", dest_uri="02_file.md", url="02_file.md",
+                 abs_dest_path=os.path.join('abs', 'path', '02_file.md'))
+        ]
+        config = {}
+        result = self.plugin.on_files(files, config)
+        self.assertEqual(result[0].dest_path, "file.md")
+        self.assertEqual(result[0].dest_uri, "file.md")
+        self.assertEqual(result[0].url, "file.md")
+        self.assertEqual(result[0].abs_dest_path,
+                         os.path.join('abs', 'path', 'file.md'))
+        self.assertEqual(result[1].dest_path, "file.md")
+        self.assertEqual(result[1].dest_uri, "file.md")
+        self.assertEqual(result[1].url, "file.md")
+        self.assertEqual(result[1].abs_dest_path,
+                         os.path.join('abs', 'path', 'file.md'))
+
+    def test_on_files_with_no_files(self):
+        files = []
+        config = {}
+        result = self.plugin.on_files(files, config)
+        self.assertEqual(result, [])
+
+    def test_on_files_with_non_digit_prefix(self):
+        files = [
+            Mock(dest_path="ab_file.md", dest_uri="ab_file.md", url="ab_file.md",
+                 abs_dest_path=os.path.join('abs', 'path', 'ab_file.md'))
+        ]
+        config = {}
+        result = self.plugin.on_files(files, config)
+        self.assertEqual(result[0].dest_path, "ab_file.md")
+        self.assertEqual(result[0].dest_uri, "ab_file.md")
+        self.assertEqual(result[0].url, "ab_file.md")
+        self.assertEqual(result[0].abs_dest_path,
+                         os.path.join('abs', 'path', 'ab_file.md'))
+
+    def test_on_files_with_posix_path_separator_on_url(self):
+        files = [
+            Mock(dest_path=os.path.join('dir', 'ab_file.md'),
+                 dest_uri=posixpath.join('dir', 'ab_file.md'),
+                 url=posixpath.join('dir', 'ab_file.md'),
+                 abs_dest_path=os.path.join('abs', 'dir', 'ab_file.md'))
+        ]
+        config = {}
+        result = self.plugin.on_files(files, config)
+        self.assertEqual(result[0].dest_path, os.path.join('dir', 'ab_file.md'))
+        self.assertEqual(result[0].dest_uri, "dir/ab_file.md")
+        self.assertEqual(result[0].url, "dir/ab_file.md")
+        self.assertEqual(result[0].abs_dest_path,
+                         os.path.join('abs', 'dir', 'ab_file.md'))
 
 
 if __name__ == '__main__':
